@@ -1,0 +1,91 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+    <meta charset = 'UTF-8'>
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <title>Mandarin Classification Neural Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .rounded-button {
+            width: 60px;
+            height: 60px;
+            background: darkslategrey;
+            color: slategrey;
+        }
+    </style>
+</head>
+<body class="bg-gray-300 flex flex-col min-h-screen font-sans antialiased">
+    <nav class="bg-slate-700 text-slate-200 flex items-center px-3 shadow-md">
+        <div class = "text-2xl font-semibold py-5">
+            Home
+        </div>  
+        <div>
+                
+        </div>
+        <div>
+
+        </div>  
+    </nav>
+
+    <div class = "flex container mt-10 sm:px-0">
+        <div class="max-w-3xl mx-auto p-6 rounded-lg shadow-md text-center bg-slate-200">
+            <h1 class ="text-3xl font-bold text-slate-800">
+                Mandarin Accent Classifier
+            </h1>
+            <br>
+            <br>
+
+            <h2>
+                Speak into the microphone to get your accent classified!
+            </h2>
+            <div>
+                <button id="recordButton" class="hover:underline">Start Recording</button>
+                <audio id="audioPlayback" controls></audio>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="https://esm.sh/ionicons@latest/loader"></script>
+    <script nomodule src="https://esm.sh/ionicons@latest/loader"></script>
+    <script>
+        const recordButton = document.getElementById('recordButton');
+        const audioPlayback = document.getElementById('audioPlayback')
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        recordButton.addEventListener('click', async () => {
+            if(!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav'});
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audioPlayback.src = audioUrl;
+                        recordButton.textContent = "Start Recording"
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    recordButton.textContent = "Stop Recording";
+                } catch (error) {
+                    console.error('Error accessing microphone:', error)
+                } 
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+            }
+        });         
+    </script>    
+</body>
+
+</html>
