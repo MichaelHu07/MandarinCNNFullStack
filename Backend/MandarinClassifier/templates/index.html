@@ -13,6 +13,8 @@
             color: slategrey;
         }
     </style>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body class="bg-gray-300 flex flex-col min-h-screen font-sans antialiased">
     <nav class="bg-slate-700 text-slate-200 flex items-center px-3 shadow-md">
@@ -20,7 +22,7 @@
             Home
         </div>  
         <div>
-                
+            <a href="#" class="hover: underline">Login</a>
         </div>
         <div>
 
@@ -39,8 +41,15 @@
                 Speak into the microphone to get your accent classified!
             </h2>
             <div>
-                <button id="recordButton" class="hover:underline">Start Recording</button>
-                <audio id="audioPlayback" controls></audio>
+                <button id="recordButton" 
+                        class="m-4 w-20 h-20 rounded-full items-center justify-center 
+                        bg-slate-600 text-white scale-100 transform transition-all 
+                        ease-out duration-125 hover:scale-110 active:scale-95" 
+                        title="Start/Stop Recording">
+
+                    <ion-icon id="recordIcon" name="mic-outline" style="font-size: 64px;"></ion-icon>
+                </button>
+                <audio id="audioPlayback" controls class="hidden center"></audio>
 
             </div>
         </div>
@@ -50,7 +59,8 @@
     <script nomodule src="https://esm.sh/ionicons@latest/loader"></script>
     <script>
         const recordButton = document.getElementById('recordButton');
-        const audioPlayback = document.getElementById('audioPlayback')
+        const audioPlayback = document.getElementById('audioPlayback');
+        const recordIcon = document.getElementById('recordIcon');
 
         let mediaRecorder;
         let audioChunks = [];
@@ -71,12 +81,16 @@
                         const audioBlob = new Blob(audioChunks, { type: 'audio/wav'});
                         const audioUrl = URL.createObjectURL(audioBlob);
                         audioPlayback.src = audioUrl;
-                        recordButton.textContent = "Start Recording"
+                        audioPlayback.classList.remove("hidden");
+                        audioPlayback.load();
+                        recordIcon.setAttribute("name", "mic-outline");
                     };
 
                     mediaRecorder.start();
+                    audioPlayback.pause();
+                    audioPlayback.classList.add("hidden");
                     isRecording = true;
-                    recordButton.textContent = "Stop Recording";
+                    recordIcon.setAttribute("name", "stop-circle-outline");
                 } catch (error) {
                     console.error('Error accessing microphone:', error)
                 } 
